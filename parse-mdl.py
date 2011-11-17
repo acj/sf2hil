@@ -15,7 +15,7 @@ __version__ = '1.3'
 # A high level grammar of the Simulink mdl file format
 SIMULINK_BNF = """
 object {
-     members
+    members
 }
 members
     variablename  value
@@ -47,17 +47,17 @@ from pyparsing import *
 
 # parse actions
 def convertNumbers(s,l,toks):
-    """Convert tokens to int or float"""
-    # Taken from jsonParser.py
-    n = toks[0]
-    try:
-        return int(n)
-    except ValueError, ve:
-        return float(n)
+	"""Convert tokens to int or float"""
+	# Taken from jsonParser.py
+	n = toks[0]
+	try:
+		return int(n)
+	except ValueError, ve:
+		return float(n)
 
 def joinStrings(s,l,toks):
-    """Join string split over multiple lines"""
-    return ["".join(toks)]
+	"""Join string split over multiple lines"""
+	return ["".join(toks)]
 
 # Define grammar
 
@@ -71,18 +71,18 @@ dblString.setParseAction( removeQuotes )
 
 
 mdlNumber = Combine( Optional('-') + ( '0' | Word('123456789',nums) ) +
-                    Optional( '.' + Word(nums) ) +
-                    Optional( Word('eE',exact=1) + Word(nums+'+-',nums) ) )
+					 Optional( '.' + Word(nums) ) +
+					 Optional( Word('eE',exact=1) + Word(nums+'+-',nums) ) )
 mdlObject = Forward()
 mdlName = Word('$'+'.'+'_'+alphas+nums)
 mdlValue = Forward()
 # Strings can be split over multiple lines
 mdlString = (dblString + Optional(OneOrMore(Suppress(LineEnd()) + LineStart()
-             + dblString)))
+			+ dblString)))
 mdlElements = delimitedList( mdlValue )
 mdlArray = Group(Suppress('[') + Optional(mdlElements) + Suppress(']') )
 mdlMatrix =Group(Suppress('[') + (delimitedList(Group(mdlElements),';')) \
-              + Suppress(']') )
+			+ Suppress(']') )
 mdlValue << ( mdlNumber | mdlName| mdlString  | mdlArray | mdlMatrix )
 memberDef = Group( mdlName  + mdlValue ) | Group(mdlObject)
 mdlMembers = OneOrMore( memberDef)
@@ -96,15 +96,15 @@ mdlObject.ignore(singleLineComment)
 mdlparser = mdlObject
 
 if __name__ == '__main__':
-    import pprint
+	import pprint
 
-    if len(sys.argv) < 2:
-        print 'usage: ' + sys.argv[0] + ' <input.mdl>'
-        sys.exit(1)
+	if len(sys.argv) < 2:
+		print 'usage: ' + sys.argv[0] + ' <input.mdl>'
+		sys.exit(1)
 
-    inputfilename = sys.argv[1]
-    infile = open(inputfilename, 'r')
-    testdata = infile.read()
-    result = mdlparser.parseString(testdata)
-    pprint.pprint(result.asList())
-    infile.close()
+	inputfilename = sys.argv[1]
+	infile = open(inputfilename, 'r')
+	testdata = infile.read()
+	result = mdlparser.parseString(testdata)
+	pprint.pprint(result.asList())
+	infile.close()
