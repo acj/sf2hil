@@ -66,7 +66,7 @@ def initializeParser():
 	mdlMembers = OneOrMore(memberDef)
 	objectDef << Group(mdlName + Suppress('{') + Optional(mdlMembers) + Suppress('}'))
 	mdlObjects = OneOrMore(objectDef)
-	mdlModel = Group(mdlName + Suppress('{') + Optional(mdlObjects) + Suppress('}'))
+	mdlModel = Group(mdlName + Suppress('{') + Optional(mdlObjects | mdlMembers) + Suppress('}'))
 	mdlNumber.setParseAction(convertNumbers)
 	mdlString.setParseAction(joinStrings)
 	# Some mdl files from Mathworks start with a comment. Ignore all
@@ -81,11 +81,11 @@ def extractStateflow(blocks):
 	"From a set of blocks, extract those related to Stateflow charts"
 	sf_blocks = []
 	for b in blocks:
-		print b
+		if b[0] == 'Stateflow':
+			sf_blocks.append(b)
 	print 'Top-level blocks seen: ' + str(len(blocks))
-	sys.exit(1)
-	#return sf_blocks
-	return blocks
+	print 'Stateflow blocks retained: ' + str(len(sf_blocks))
+	return sf_blocks
 
 if __name__ == '__main__':
 	import pprint
@@ -101,5 +101,4 @@ if __name__ == '__main__':
 	result = mdlParser.parseString(testdata)
 	sf_blocks = extractStateflow(result)
 	#pprint.pprint(sf_blocks)
-	pprint.pprint(result.asList())
 	infile.close()
