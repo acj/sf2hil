@@ -54,7 +54,10 @@ def initializeParser():
 				LineStart() + dblString)))
 	# Stateflow vector elements are delimited by spaces, not commas. This
 	# rule handles both cases.
-	mdlArray = Group((Suppress('[') + mdlValue + OneOrMore(Optional(Suppress(Literal(','))) + mdlValue) + Suppress(']')))
+	mdlArray = Group((Suppress('[') +
+				mdlValue +
+				OneOrMore(Optional(Suppress(Literal(','))) + mdlValue) +
+				Suppress(']')))
 	mdlMatrix = Group(Suppress('[') +
 				delimitedList(Group(delimitedList(mdlValue, delim=',')), ';') +
 				Suppress(']'))
