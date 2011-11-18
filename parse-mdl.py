@@ -64,9 +64,9 @@ def initializeParser():
 	mdlValue << (mdlNumber | mdlName | mdlString | mdlArray | mdlMatrix)
 	memberDef = Group(mdlName + mdlValue) | Group(objectDef)
 	mdlMembers = OneOrMore(memberDef)
-	objectDef << (mdlName + Suppress('{') + Optional(mdlMembers) + Suppress('}'))
+	objectDef << Group(mdlName + Suppress('{') + Optional(mdlMembers) + Suppress('}'))
 	mdlObjects = OneOrMore(objectDef)
-	mdlModel = mdlName + Suppress('{') + Group(Optional(mdlObjects)) + Suppress('}')
+	mdlModel = Group(mdlName + Suppress('{') + Optional(mdlObjects) + Suppress('}'))
 	mdlNumber.setParseAction(convertNumbers)
 	mdlString.setParseAction(joinStrings)
 	# Some mdl files from Mathworks start with a comment. Ignore all
