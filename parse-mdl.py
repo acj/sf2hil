@@ -55,8 +55,8 @@ def initializeParser():
 	# Stateflow vector elements are delimited by spaces, not commas. This
 	# rule handles both cases.
 	mdlArray = Group((Suppress('[') +
-				mdlValue +
-				OneOrMore(Optional(Suppress(Literal(','))) + mdlValue) +
+				Optional(mdlValue) +
+				ZeroOrMore(Optional(Suppress(Literal(','))) + mdlValue) +
 				Suppress(']')))
 	mdlMatrix = Group(Suppress('[') +
 				delimitedList(Group(delimitedList(mdlValue, delim=',')), ';') +
@@ -66,7 +66,7 @@ def initializeParser():
 	mdlMembers = OneOrMore(memberDef)
 	objectDef << Group(mdlName + Suppress('{') + Optional(mdlMembers) + Suppress('}'))
 	mdlObjects = OneOrMore(objectDef)
-	mdlModel = Group(mdlName + Suppress('{') + Optional(mdlObjects | mdlMembers) + Suppress('}'))
+	mdlModel = OneOrMore(Group(mdlName + Suppress('{') + Optional(mdlObjects | mdlMembers) + Suppress('}')))
 	mdlNumber.setParseAction(convertNumbers)
 	mdlString.setParseAction(joinStrings)
 	# Some mdl files from Mathworks start with a comment. Ignore all
