@@ -61,10 +61,9 @@ def initializeParser():
 	mdlMatrix = Group(Suppress('[') +
 				delimitedList(Group(delimitedList(mdlValue, delim=',')), ';') +
 				Suppress(']'))
-	mdlValue << (mdlNumber | mdlName | mdlString | mdlArray | mdlMatrix)
-	memberDef = Group(mdlName + mdlValue) | Group(objectDef)
-	mdlMembers = OneOrMore(memberDef)
-	objectDef << Group(mdlName + Suppress('{') + Optional(mdlMembers) + Suppress('}'))
+	mdlValue << (mdlNumber | mdlName | mdlString | mdlArray | mdlMatrix | objectDef)
+	mdlMembers = dictOf(mdlName, mdlValue)
+	objectDef << Suppress('{') + Optional(mdlMembers) + Suppress('}')
 	mdlObjects = OneOrMore(objectDef)
 	mdlModel = OneOrMore(Group(mdlName + Suppress('{') + Optional(mdlObjects | mdlMembers) + Suppress('}')))
 	mdlNumber.setParseAction(convertNumbers)
