@@ -86,6 +86,29 @@ def extractStateflow(blocks):
 	print 'Stateflow blocks retained: ' + str(len(sf_blocks))
 	return sf_blocks
 
+def handleStateflowBlock(sf_block):
+	for block in sf_block[0]:
+		if block[0] == 'state':
+			handleState(block)
+		elif block[0] == 'transition':
+			handleTransition(block)
+		else:
+			pass
+
+def handleState(state_block):
+	get_prop = lambda key: state_block[key] if key in state_block else ''
+	state = {}
+	for field in ('id', 'chart', 'label', 'type', 'decomposition'):
+		state[field] = get_prop(field)
+	return state
+
+def handleTransition(trans_block):
+	get_prop = lambda key: trans_block[key] if key in trans_block else ''
+	trans = {}
+	for field in ('id', 'chart', 'src', 'dst', 'labelString'):
+		trans[field] = get_prop(field)
+	return trans
+
 if __name__ == '__main__':
 	import pprint
 
@@ -97,7 +120,18 @@ if __name__ == '__main__':
 	infile = open(inputfilename, 'r')
 	testdata = infile.read()
 	mdlParser = initializeParser()
-	result = mdlParser.parseString(testdata)
-	sf_blocks = extractStateflow(result)
-	#pprint.pprint(sf_blocks)
-	infile.close()
+	try:
+		result = mdlParser.parseString(testdata)
+		sf_blocks = extractStateflow(result)
+		if len(sf_blocks) == 0:
+			print 'No Stateflow stanzas were found.'
+			sys.exit(1)
+
+		handleStateflowBlock(sf_blocks)
+        #pprint.pprint(sf_blocks)
+		infile.close()
+
+	except ParseException, pe:
+		print pe
+		# helper diagnostic method to see where things went bad
+		print pe.markInputline()
