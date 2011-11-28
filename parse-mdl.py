@@ -3,14 +3,13 @@ A simple Simulink mdl file parser.
 
 Credits:
 Most of the code is based on the json parser example distributed with
-pyparsing. The code in jsonParser.py was written by Paul McGuire
-
-
+pyparsing. The code in jsonParser.py was written by Paul McGuire. The code
+was extended into a parser for Stateflow by Adam Jensen.
 """
 
-__author__ = 'Kjell Magne Fauske'
+__author__ = 'Adam C. Jensen'
 __license__ = 'MIT'
-__version__ = '1.3'
+__version__ = '1.0'
 
 import re
 import sys
